@@ -1,0 +1,6 @@
+fitz
+pymupdf
+langchain
+langchain_community
+pypdf
+
