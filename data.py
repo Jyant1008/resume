@@ -68,27 +68,28 @@ if st.button("Extract & Save Resume Data"):
                 search_docs = db.similarity_search(User_question)
                 context = [doc.page_content for doc in search_docs]
                 template = """ You are a helpful assistant who answers the user's questions effectively.
-                                Answer the following question based only on the provided context and the text
+                                Answer the following question based only on the provided context 
 
                                 - Use relevent information from the context
                                 - if you don't get the informtion then give "N/A" as an output                               
                                 - Do not mention that you have context  or that you are using it.
                                 - provide to the point answer 
-
-                                <text>
-                                {text}
-                                </text>
                                 <context>
                                 {context}
                                 </context>
                                 User Question: {User_question}
+                                - if you don't find any information in context then search in the text
+                                <text>
+                                {text}
+                                </text>
+
                  
                                 """
                 prompt = ChatPromptTemplate.from_template(template)
                 llm = LLM_model
                 Output_Parser = StrOutputParser()
                 chain = prompt|llm|Output_Parser
-                response=chain.invoke({'User_question':User_question,'context':context,"text": text})
+                response=chain.invoke({'User_question':User_question,'context':context, 'text': text})
                 return response if response else "N/A"
 
             # Process single resume
@@ -96,6 +97,7 @@ if st.button("Extract & Save Resume Data"):
                
                 db = create_vector_db(temp_file,500,100)
                 text=extract_text_from_pdf(pdf_path)
+                
 
                 extracted_data = {
                     "Name": extract_info_from_resume(db, "what is the  Full Name of person/student/candidate it must be their find out properly?",text),
