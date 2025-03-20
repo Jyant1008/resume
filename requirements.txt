@@ -3,4 +3,12 @@ pymupdf
 langchain
 langchain_community
 pypdf
-
+langchain_nomic
+langchain_groq
+faiss-cpu
+streamlit
+pypdf2
+rank_bm25
+scikit-learn
+numpy
+openpyxl
