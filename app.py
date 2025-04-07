@@ -122,23 +122,32 @@ def condtion_check(pdf_path, query, output_folder, chunk_size, chunk_overlap):
     Extracted_Resume_Information = "\n".join([f"{i+1}. {chunk}" for i, chunk in enumerate(top_chunks)])
 
     # Ask LLM if these chunks satisfy the condition
-    templete_2 = """
-    You are an AI recruiter. Your task is to check if a resume satisfies a given job requirement.
+    templete_2 =  """- You are an AI recruiter. Your task is to check if a resume satisfies a given job requirement.
+                    - Use your understanding to recognize alternative words or phrasing in both the resume and the query.
+                    - The extracted resume information is the primary source for checking the condition.
+                    - The extra information provides additional verification but should only be used if necessary.
 
-    **Job Query/Condition:** {query}
+                    **Step 1: Primary Check Using Extracted Resume Information**
+                    - First, check whether the extracted resume information (most relevant sections) fully satisfies the job query/condition.
+                    - If all conditions are met, proceed to Step 2.
+                    - If even one condition is missing, respond immediately with 'No'.
 
-    **Extracted Resume Information (Top 4 Most Relevant Sections):**
-    {Extracted_Resume_Information}
-    - Extra information about the person: {extra_information}
+                    **Step 2: Verification Using Extra Information**
+                    - If the extracted resume information is sufficient, verify it using the additional extracted details about the person.
+                    - If the extra information contradicts or lacks essential details, respond with 'No'.
+                    - Otherwise, confirm the response as 'Yes'.
 
-    **Evaluation Criteria:**
-    - Consider ALL four extracted chunks together and Extra information about the person.
-    - Check if, when combined, they satisfy ALL conditions mentioned in the job query.
-    - If every required condition is met across these four chunks, or the data you are provided respond with 'Yes'.
-    - If even one condition is missing, respond with 'No'.
+                    **Job Query/Condition:** 
+                    {query}
 
-    **Final Answer (Only output 'Yes' or 'No'):**
-    """
+                    **Extracted Resume Information (Top 4 Most Relevant Sections):** 
+                    {Extracted_Resume_Information}
+
+                    **Extra Information for Verification:** 
+                    {extra_information}
+
+                    **Final Answer (Only output 'Yes' or 'No'):**
+                """
     prompt = ChatPromptTemplate.from_template(templete_2)
     llm = LLM_model
     Output_Parser = StrOutputParser()
